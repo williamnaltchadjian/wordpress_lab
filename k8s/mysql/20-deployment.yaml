@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpassword"  # Defina a senha do root diretamente
+        - name: MYSQL_DATABASE
+          value: "wordpress"    # Defina o nome do banco de dados diretamente
+        - name: MYSQL_USER
+          value: "wpuser"       # Defina o nome do usuário do banco de dados
+        - name: MYSQL_PASSWORD
+          value: "wppassword"   # Defina a senha do usuário do banco de dados
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+
